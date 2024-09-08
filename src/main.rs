@@ -1,6 +1,6 @@
 #![warn(clippy::pedantic)]
 
-use iced::widget::text_editor;
+use iced::widget::{container, text_editor};
 use iced::{Element, Sandbox, Settings};
 
 fn main() -> iced::Result {
@@ -38,8 +38,12 @@ impl Sandbox for Editor {
     }
 
     fn view(&self) -> Element<'_, Self::Message> {
-        text_editor(&self.content)
-            .on_edit(EditorMessage::Edit)
-            .into()
+        let input_widget = text_editor(&self.content).on_edit(EditorMessage::Edit);
+
+        container(input_widget).padding(10).into()
+    }
+
+    fn theme(&self) -> iced::Theme {
+        iced::Theme::Dark
     }
 }

@@ -1,7 +1,8 @@
 #![warn(clippy::pedantic)]
 
 use iced::widget::{column, container, horizontal_space, row, text, text_editor};
-use iced::{Element, Length, Sandbox, Settings};
+use iced::{executor, Command};
+use iced::{Application, Element, Length, Settings, Theme};
 
 fn main() -> iced::Result {
     Editor::run(Settings::default())
@@ -16,25 +17,30 @@ enum EditorMessage {
     Edit(text_editor::Action),
 }
 
-impl Sandbox for Editor {
+impl Application for Editor {
     type Message = EditorMessage;
+    type Theme = Theme;
+    type Executor = executor::Default;
+    type Flags = ();
 
-    fn new() -> Self {
-        Self {
-            content: text_editor::Content::with(include_str!("main.rs")),
-        }
+    fn new(_flags: Self::Flags) -> (Editor, iced::Command<Self::Message>) {
+        (
+            Self {
+                content: text_editor::Content::with(include_str!("main.rs")),
+            },
+            Command::none(),
+        )
     }
 
     fn title(&self) -> String {
         String::from("A cool editor!")
     }
 
-    fn update(&mut self, message: Self::Message) {
+    fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
         match message {
-            EditorMessage::Edit(action) => {
-                self.content.edit(action);
-            }
+            EditorMessage::Edit(action) => self.content.edit(action),
         }
+        Command::none()
     }
 
     fn view(&self) -> Element<'_, Self::Message> {

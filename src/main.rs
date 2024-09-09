@@ -19,7 +19,7 @@ enum Error {
 }
 struct Editor {
     content: text_editor::Content,
-    error: Error,
+    error: Option<Error>,
 }
 #[derive(Debug, Clone)]
 enum Message {
@@ -37,7 +37,7 @@ impl Application for Editor {
         (
             Self {
                 content: text_editor::Content::new(),
-                error: Error::DialogClosed,
+                error: None,
             },
             Command::none(), // Command::perform(
                              //     load_file(format!("{}/src/main.rs", env!("CARGO_MANIFEST_DIR"))),
@@ -62,7 +62,7 @@ impl Application for Editor {
                 Command::none()
             }
             Message::FileOpened(Err(error)) => {
-                self.error = error;
+                self.error = Some(error);
                 Command::none()
             }
         }
